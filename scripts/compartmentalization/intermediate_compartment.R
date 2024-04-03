@@ -120,14 +120,3 @@ do.call(rbind, lapply(my_list, function(x) {
           plot.margin = unit(c(0,0,0,0), "cm"))
   ggsave(paste(unique(df_agg$species), "Gaus_distribution_barplot_EDF4c.pdf", sep = "_"), width = 4, height = 0.7)
 }))
-
-
-########## Generate A, B and I interval regions.
-################################################
-#!/bin/bash
-for f in Cowc Emue Mlei Tadh Dmel Hsap; do
-bedtools groupby -i ${f}_compartment_regions_Gaus_distr.txt -g 1,4 -c 2,3 -o min,max \
-| awk -v OFS='\t' '{print $1, $3, $4, $2}' \
-> ${f}_compartment_regions_Gaus_distr_region.bed
-done
-################################################
