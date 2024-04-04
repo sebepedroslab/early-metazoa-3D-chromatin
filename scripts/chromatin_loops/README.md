@@ -1,6 +1,6 @@
 # **Chromatin loop analysis steps**
 
-#### 1. Identify chromatin loops using [SIP](https://github.com/PouletAxel/SIP).
+1. Identify chromatin loops using [SIP](https://github.com/PouletAxel/SIP).
 for _Mnemiopsis leidyi_
 ```
 java -Xmx10g -jar SIP_HiC_v1.6.1.jar hic mlei.hic ${CHROMSIZE} ./data/chromatin_loops/SIP juicer_tools_1.13.01.jar \
@@ -17,12 +17,12 @@ java -Xmx10g -jar SIP_HiC_v1.6.1.jar hic tadh.hic ${CHROMSIZE} ./data/chromatin_
                                      -cpu ${CPU} 
 ```
 
-#### 2. Filter loops using APScore to remove regions of genome misassemblies annotated as chromatin loops.
+2. Filter loops using APScore to remove regions of genome misassemblies annotated as chromatin loops.
 >
 >[loop_APScore_filtering.R](loop_APScore_filtering.R)
 >
 
-#### 3. Classify loop anchors into promoter and enhancer sites
+3. Classify loop anchors into promoter and enhancer sites
 >
 >[loop_anchor_classification.R](loop_anchor_classification.R)
 >
