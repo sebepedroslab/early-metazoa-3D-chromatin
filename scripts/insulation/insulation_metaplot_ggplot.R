@@ -16,6 +16,7 @@ overlap_IS2window <- function(window_gr, IS_gr) {
 merge_w1_w2 <- function(w1, w2, name) {
   ww <- rbind(w1, w2)
   threshold <- quantile(ww$boundary_strength, probs = 0.25)
+  
   ww <- subset(ww, ww$boundary_strength > threshold)
   interval_gr <- reduce(makeGRangesFromDataFrame(ww,
                                           seqnames.field = "chrom",

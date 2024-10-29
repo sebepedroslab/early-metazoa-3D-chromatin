@@ -1,4 +1,3 @@
-library("qdap")
 library("rtracklayer")
 library("GenomicRanges")
 library("scales")

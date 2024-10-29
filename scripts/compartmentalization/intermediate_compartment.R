@@ -11,7 +11,7 @@ plot_mix_comps <- function(x, mu, sigma, lam) {
 }
 
 eigen_assignment <- function(input_fn, species, width_chr, height_chr) {
-  df_e123 <- read.csv(input_fn, h = T, sep = "\t")
+  df_e123 <- read.csv(input_fn, h = TRUE, sep = "\t")
   df_e123 <- df_e123[,c(1:4)]
   df_e123 <- na.omit(df_e123)
   q1 <- quantile(df_e123$E1, 0.025)
@@ -29,7 +29,7 @@ eigen_assignment <- function(input_fn, species, width_chr, height_chr) {
   z <- seq(min(df$E1_norm), max(df$E1_norm), 1e-2)
   u <- sapply(1:length(w1$mu), FUN = function(i) dnorm(z, w1$mu[i], w1$sigma[i]))
 
-  # find inflection points by retrieving the values with minimal absolute difference of the likelihoods given neighboring distributions
+  # find intersection points by retrieving the values with minimal absolute difference of the likelihoods given neighboring distributions
   inflections <- sapply(1:(length(w1$mu) - 1), FUN = function(i){
     z_range <- z[z > w1$mu[i] & z < w1$mu[i + 1]]
     u_range <- u[z > w1$mu[i] & z < w1$mu[i + 1],]
@@ -82,23 +82,30 @@ eigen_assignment <- function(input_fn, species, width_chr, height_chr) {
 setwd("./data/compartmentalization/eigenvalues")
 
 ## Path to the files
-dmel_fn <- "./dmel_E1_3_6878bp.bed"
-hsap_fn <- "./hsap_E1_3_154413bp.bed"
-tadh_fn <- "./tadh_E1_3_4509bp.bed"
-mlei_fn <- "./mlei_E1_3_10252bp.bed"
-emue_fn <- "./emue_E1_3_10790bp.bed"
-cowc_fn <- "./cowc_E1_3_1423bp.bed"
+dmel_fn <- "./dmel_E1_6878bp.bed"
+hsap_fn <- "./hsap_E1_154413bp.bed"
+tadh_fn <- "./tadh_E1_4509bp.bed"
+mlei_fn <- "./mlei_E1_10252bp.bed"
+emue_fn <- "./emue_E1_10790bp.bed"
+cowc_fn <- "./cowc_E1_1423bp.bed"
+sros_fn <- "./sros_E1_2585bp.bed"
+sarc_fn <- "./sarc_E1_7032bp.bed"
+nvec_fn <- "./nvec_E1_13469bp.bed"
 
 ## Assign compartment types
 dmel <- eigen_assignment(dmel_fn, "Dmel", 10, 3.5)
 hsap <- eigen_assignment(hsap_fn, "Hsap", 10, 10)
 tadh <- eigen_assignment(tadh_fn, "Tadh", 10, 3.5)
 mlei <- eigen_assignment(mlei_fn, "Mlei", 10, 6.5)
-emue <- eigen_assignment(emue_fn, "Emue", 0, 10)
+emue <- eigen_assignment(emue_fn, "Emue", 10, 10)
 cowc <- eigen_assignment(cowc_fn, "Cowc", 10, 10)
+sros <- eigen_assignment(sros_fn, "Sros", 10, 10)
+sarc <- eigen_assignment(sarc_fn, "Sarc", 10, 10)
+nvec <- eigen_assignment(nvec_fn, "Nvec", 10, 3.5)
 
 ## Prepare data for stacked barplot
-my_list <- list("cowc" = cowc, "emue" = emue, "mlei" = mlei, "tadh" = tadh, "dmel" = dmel, "hsap" = hsap)
+my_list <- list("sarc" = sarc, "cowc" = cowc, "sros" = sros, "emue" = emue,
+                "mlei" = mlei, "tadh" = tadh, "nvec" = nvec, "dmel" = dmel, "hsap" = hsap)
 
 do.call(rbind, lapply(my_list, function(x) {
   df <- x[,c(6,7,8)]

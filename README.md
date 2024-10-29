@@ -1,6 +1,7 @@
-# early-metazoa-3D-chromatin
+# Evolutionary origin of animal genome regulation
 Code to reproduce analyses in Kim et al. 2024
 
+![alt text](data/images/Fig5.png)
 
 ### Data analyses
 + The **Micro-C processing pipeline**, which covers the full workflow from raw sequenced reads to normalized contact matrices, is available in the [scripts folder](./scripts/microc_processing/). This pipeline is adapted from the [4DN HiC processing pipeline](https://data.4dnucleome.org/resources/data-analysis/hi_c-processing-pipeline).
@@ -19,3 +20,5 @@ Code to reproduce analyses in Kim et al. 2024
 ### Data exploration
 Generated datasets could be explored in interactive genome browsers configured for each species:
 [GBrowser](https://sebelab.crg.eu/3d-genomes-arc-jb2)
+
+![alt text](data/images/GBrowser.png)
