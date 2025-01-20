@@ -1,14 +1,16 @@
 #!/bin/bash
 
-#############################################################################################
+###############################################################################################
 # For each species, we calculated insulation scores profiles at resolutions approximately 
 # equivalent to 50,000, 100,000, 200,000 and 400,000 genomic bins per species genome with
 # a sliding window for each resolution that is 5x, 10x and 25x the applied resolution.
 # The applied resolutions corresponded to bin sizes of 400 bp, 1,000 bp, 2,000 bp and 4,000 bp
-# for M. leidyi and E. muelleri, while for C. owczarzaki and T. adhaerens, insulation scores
-# were called at resolutions 200 bp, 400 bp, 800 bp, and 2,000 bp. Below is an example of the
-# script used to calculate insultaion profiles in Mnemiopsis leidyi.
-#############################################################################################
+# for M. leidyi and E. muelleri; for S. arctica we applied resolutions of 400bp, 800bp, 1,600bp,
+# and 2,800 bp; for C. owczarzaki, S. rosetta, and T. adhaerens, insulation scores were called
+# at resolutions 200 bp, 400 bp, 800 bp, and 1,600 bp; for N. vectensis - 500 bp, 1,000 bp, 
+# 2,500 bp, 5,000 bp. Below is an example of the script used to calculate insultaion profiles 
+# in Mnemiopsis leidyi.
+###############################################################################################
 
 ### Activate conda environment before starting the script
 conda activate cooltools_env

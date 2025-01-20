@@ -22,7 +22,14 @@ java -Xmx10g -jar SIP_HiC_v1.6.1.jar hic tadh.hic ${CHROMSIZE} ./data/chromatin_
 >[loop_APScore_filtering.R](loop_APScore_filtering.R)
 >
 
-3. Classify loop anchors into promoter and enhancer sites
+3. Classify loop anchors into promoter and enhancer sites. Here we use Mnemiopsis leidyi as an example.
 >
 >[loop_anchor_classification.R](loop_anchor_classification.R)
 >
+![alt text](../../data/images/loop_anchor_annotation.png)
+
+4. Annotate genomic bins with a specific motif.
+>
+>[motif_analysis_in_loop_anchors.R](motif_analysis_in_loop_anchors.R)
+>
+![alt text](../../data/images/motif_score_distribution.png)

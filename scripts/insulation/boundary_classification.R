@@ -273,7 +273,7 @@ ggplot(df, aes(y = species, x = variable, size = value, fill = variable)) +
         axis.text.x = element_text(angle = 0),
         axis.ticks.x = element_blank(), axis.line = element_blank(),
         plot.margin = unit(c(0.8, 0.5, 0.5, 0), "cm"))
-ggsave("./Insulation_boundaries_classification_point_plot_EDF5d.pdf", width = 6.5, height = 5)
+ggsave("./Insulation_boundaries_classification_point_plot_EDF4d.pdf", width = 6.5, height = 5)
 
 
 # Assign features to insulation boundaries using hierarchical classification

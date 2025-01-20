@@ -1,5 +1,6 @@
 library(rtracklayer)
 library(GenomicRanges)
+library(preprocessCore)
 library(ggplot2)
 library(ggprism)
 
@@ -25,9 +26,8 @@ plot(density(macs2$size), xlim = c(0, 5000))
 loop_fn <- "./data/chromatin_loops/Mlei_filtered_chromatin_loops_4261.txt"
 macsMe2_fn <- "./data/insulation/H3K4me2/Mlei_H3K4me2_macs_narrow_summits.bed"
 macsMe3_fn <- "./data/insulation/H3K4me3/Mlei_H3K4me3_macs_narrow_summits.bed"
-gw_bin_fn <- "./data/genome/Mlei_gDNA.cooler_makebins_2000bp.bed" # The 2000 bp bins are generated using cooler makebins module.
-bedMe2_fn <- "./data/chromatin_loops/H3K4me2_coverage_Mlei_gDNA.cooler_makebins_100bp.bed" # ChIP coverage genome-wide in 100 bp bins.
-bedMe3_fn <- "./data/chromatin_loops/H3K4me3_coverage_Mlei_gDNA.cooler_makebins_100bp.bed" # The bins are generated using cooler makebins module.
+bedMe2_fn <- "./data/chromatin_loops/H3K4me2_coverage_Mlei_gDNA_100bp.bed" # ChIP-seq coverage genome-wide in genomic bins of 100 bp.
+bedMe3_fn <- "./data/chromatin_loops/H3K4me3_coverage_Mlei_gDNA_100bp.bed"
 ################
 
 
@@ -65,48 +65,55 @@ names(bedMe3)[4] <- "H3K4me3_raw"
 chip <- merge(bedMe2, bedMe3, by = c("V1", "V2", "V3"), all = TRUE)
 chip$bin <- paste("bin", seq(1, length(chip$V1)), sep = "_")
 rownames(chip) <- chip$bin
-chip_gr <- makeGRangesFromDataFrame(chip,
-                                    keep.extra.columns = TRUE,
-                                    seqnames.field = "V1",
-                                    start.field = "V2",
-                                    end.field = "V3")
+
+# quantile normalization
+chip_qn <- as.data.frame(normalize.quantiles(as.matrix(chip[,4:5]), keep.names = TRUE))
+colnames(chip_qn) <- c("K4me2_qn", "K4me3_qn")
+chip <- merge(chip, chip_qn, by = "row.names")
+rownames(chip) <- chip$bin
+
+gw100bGR <- makeGRangesFromDataFrame(chip[,c(2,3,4,8,9,7)], keep.extra.columns = TRUE, 
+                                     seqnames.field = "V1", 
+                                     start.field = "V2", 
+                                     end.field = "V3")
 ##############
 
-
 # Select background ChIP bins that intersect ChIP summits but not loop anchors
-gwGR_bg <- chip_gr[chip_gr %over% c(macsMe2, macsMe3)]
+gwGR_bg <- gw100bGR[gw100bGR %over% c(macsMe2, macsMe3)]
 gwGR_bg <- gwGR_bg[gwGR_bg %outside% loop]
 
-# Overlap background bins with 2000 bp bin regions and select the maximum ChIP coverage value.
 bg_ov <- findOverlaps(gwGR_bg, gw_bin)
 bg <- data.frame(gwGR_bg[queryHits(bg_ov)], gw_bin[subjectHits(bg_ov)], row.names = NULL)
 bg_bin <- bg$bin
 bg <- bg[,c(9:11, 6, 7, 8)]
-bgaMe2 <- aggregate(K4me2_raw ~ ., bg[,c(1:3, 4)], max)
-bgaMe3 <- aggregate(K4me3_raw ~ ., bg[,c(1:3, 5)], max)
+bgaMe2 <- aggregate(K4me2_qn ~ ., bg[,c(1:3,4)], max)
+bgaMe3 <- aggregate(K4me3_qn ~ ., bg[,c(1:3,5)], max)
 bga <- merge(bgaMe2, bgaMe3, by = c("seqnames.1", "start.1", "end.1"))
 bga$feature <- "Other peaks"
-bga$peu <- "control"
+ga$peu <- "control"
 bga$loop <- paste("bg", seq(1, length(bga$seqnames.1)), sep = "_")
 
 # Select ChIP coverage bins that intersect loop anchors
-tar_ov <- findOverlaps(chip_gr, loop)
-tar <- data.frame(chip_gr[queryHits(tar_ov)], loop[subjectHits(tar_ov)], row.names = NULL)
-tar <- tar[,c(9:11, 6, 7, 8, 14)]
-tarMe2 <- aggregate(K4me2_raw ~ ., tar[,c(1:3, 4, 7)], max)
-tarMe3 <- aggregate(K4me3_raw ~ ., tar[,c(1:3, 5, 7)], max)
+tar_ov <- findOverlaps(gw100bGR, loop)
+tar <- data.frame(gw100bGR[queryHits(tar_ov)], loop[subjectHits(tar_ov)], row.names = NULL)
+tar <- tar[,c(9:11, 6,7,8,14)]
+
+tarMe2 <- aggregate(K4me2_qn ~ ., tar[,c(1:3,4,7)], max)
+tarMe3 <- aggregate(K4me3_qn ~ ., tar[,c(1:3,5,7)], max)
 tarloop <- merge(tarMe2, tarMe3, by = c("seqnames.1", "start.1", "end.1", "name"))
 tarloop$feature <- "Loop anchors"
 names(tarloop)[4] <- "loop"
-tarloop$peu <- ifelse(tarloop$K4me2_raw > tarloop$K4me3_raw, "E", "P")
+tarloop$peu <- ifelse(tarloop$K4me2_qn > tarloop$K4me3_qn, "E", "P")
+
 
 # Define bins with low ChIP coverage to assign "unknown" feature
-plot(density(tarloop$K4me2_raw+ tarloop$K4me3_raw), xlim = c(0,50))
-abline(v=15)
-tarloop$peu <- ifelse((tarloop$K4me2_raw + tarloop$K4me3_raw) < 15, "U", tarloop$peu)
+plot(density(tarloop$K4me2_qn + tarloop$K4me3_qn), xlim = c(0, 50))
+abline(v = 15)
+
+tarloop$peu <- ifelse((tarloop$K4me2_qn + tarloop$K4me3_qn) < 15, "U", tarloop$peu)
 tarloop$peu <- factor(tarloop$peu, levels = c("P", "E", "U"))
 
-ggplot(tarloop, aes(K4me2_raw, K4me3_raw, color = peu)) +
+ggplot(tarloop, aes(K4me2_qn, K4me3_qn, color = peu)) +
   geom_point(size = 0.05) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
   scale_color_manual(values = c("#F4A460", "#009F6B", "grey80")) +
@@ -124,7 +131,7 @@ ggplot(tarloop, aes(K4me2_raw, K4me3_raw, color = peu)) +
 # Estimate the number of background ChIP-seq peaks that are not in loop anchors
 togGW <- rbind(tarloop, bga)
 
-ggplot(togGW, aes(K4me2_raw, K4me3_raw)) +
+ggplot(togGW, aes(K4me2_qn, K4me3_qn)) +
   geom_point(aes(colour = feature), size = 0.05, alpha = 0.5) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", linewidth = 0.4) +
   scale_x_continuous(limits = c(0, 50), expand = c(0, 0),

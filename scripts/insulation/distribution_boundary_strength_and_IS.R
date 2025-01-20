@@ -45,12 +45,15 @@ w_and_s_boundary_insulation <- function(input_fn, input_li, input_li_is) {
 
 setwd("./data/insulation")
 
-### Input insulation boundaries (weak and strong) from Step 4.
+### Input insulation boundaries (weak and strong) from Step 3.
 #######
+sarc_fn <- "./sarc_1600bpRes.boundaries_w+s.tsv"
 cowc_fn <- "./cowc_400bpRes.boundaries_w+s.tsv"
+sros_fn <- "./sros_400bpRes.boundaries_w+s.tsv"
 emue_fn <- "./emue_1000bpRes.boundaries_w+s.tsv"
 mlei_fn <- "./mlei_1000bpRes.boundaries_w+s.tsv"
 tadh_fn <- "./tadh_400bpRes.boundaries_w+s.tsv"
+nvec_fn <- "./nvec_1000bpRes.boundaries_w+s.tsv"
 dmel_fn <- "./dmel_400bpRes.boundaries_w+s.tsv"
 hsap_fn <- "./hsap_10kbRes.boundaries_w+s.tsv"
 #######
@@ -74,6 +77,16 @@ dmel_li_is <- import("./insulation_score/dmel_400bp_insulation_score.bw")
 
 hsap_li <- import("./boundary_strength/hsap_10kb_boundary_strength.bw")
 hsap_li_is <- import("./insulation_score/hsap_10kb_insulation_score.bw")
+
+nvec_li <- import("./boundary_strength/nvec_1000bp_boundary_strength.bw")
+nvec_li_is <- import("./insulation_score/nvec_1000bp_insulation_score.bw")
+
+sros_li <- import("./boundary_strength/sros_400bp_boundary_strength.bw")
+sros_li_is <- import("./insulation_score/sros_400bp_insulation_score.bw")
+
+sarc_li <- import("./boundary_strength/sarc_1600bp_boundary_strength.bw")
+sarc_li_is <- import("./insulation_score/sarc_1600bp_insulation_score.bw")
+
 #######
 
 ### Identify weak and strong boundaries
@@ -84,33 +97,48 @@ mlei <- w_and_s_boundary_insulation(mlei_fn, mlei_li, mlei_li_is)
 tadh <- w_and_s_boundary_insulation(tadh_fn, tadh_li, tadh_li_is)
 dmel <- w_and_s_boundary_insulation(dmel_fn, dmel_li, dmel_li_is)
 hsap <- w_and_s_boundary_insulation(hsap_fn, hsap_li, hsap_li_is)
+nvec <- w_and_s_boundary_insulation(nvec_fn, nvec_li, nvec_li_is)
+sros <- w_and_s_boundary_insulation(sros_fn, sros_li, sros_li_is)
+sarc <- w_and_s_boundary_insulation(sarc_fn, sarc_li, sarc_li_is)
 
-all <- data.frame("species" = c(rep("Cowc", length(cowc$boundary_strength)),
-                                rep("Emue", length(emue$boundary_strength)),
-                                rep("Mlei", length(mlei$boundary_strength)),
-                                rep("Tadh", length(tadh$boundary_strength)),
-                                rep("Dmel", length(dmel$boundary_strength)),
-                                rep("Hsap", length(hsap$boundary_strength))),
-                  "insulation" = c(cowc$insulation_score,
-                                   emue$insulation_score,
-                                   mlei$insulation_score,
-                                   tadh$insulation_score,
-                                   dmel$insulation_score,
-                                   hsap$insulation_score),
-                  "boundary" = c(cowc$boundary_strength,
-                                 emue$boundary_strength,
-                                 mlei$boundary_strength,
-                                 tadh$boundary_strength,
-                                 dmel$boundary_strength,
-                                 hsap$boundary_strength),
-                  "category" = c(cowc$color,
-                                 emue$color,
-                                 mlei$color,
-                                 tadh$color,
-                                 dmel$color,
-                                 hsap$color))
+all <- data.frame("species" = c(rep("Sarc", length(sarc$boundary_strength)),
+                               rep("Cowc", length(cowc$boundary_strength)),
+                               rep("Sros", length(sros$boundary_strength)),
+                               rep("Emue", length(emue$boundary_strength)),
+                               rep("Mlei", length(mlei$boundary_strength)),
+                               rep("Tadh", length(tadh$boundary_strength)),
+                               rep("Nvec", length(nvec$boundary_strength)),
+                               rep("Dmel", length(dmel$boundary_strength)),
+                               rep("Hsap", length(hsap$boundary_strength))),
+                 "insulation" = c(sarc$insulation_score,
+                                  cowc$insulation_score,
+                                  sros$insulation_score,
+                                  emue$insulation_score,
+                                  mlei$insulation_score,
+                                  tadh$insulation_score,
+                                  nvec$insulation_score,
+                                  dmel$insulation_score,
+                                  hsap$insulation_score),
+                 "boundary" = c(sarc$boundary_strength,
+                                cowc$boundary_strength,
+                                sros$boundary_strength,
+                                emue$boundary_strength,
+                                mlei$boundary_strength,
+                                tadh$boundary_strength,
+                                nvec$boundary_strength,
+                                dmel$boundary_strength,
+                                hsap$boundary_strength),
+                 "category" = c(sarc$color,
+                                cowc$color,
+                                sros$color,
+                                emue$color,
+                                mlei$color,
+                                tadh$color,
+                                nvec$color,
+                                dmel$color,
+                                hsap$color))
 
-all$species <- factor(all$species, levels = c("Cowc", "Mlei", "Emue","Tadh","Dmel", "Hsap"))
+all$species <- factor(all$species, levels = c("Sarc", "Cowc", "Sros", "Mlei",  "Emue", "Tadh",  "Nvec",  "Dmel", "Hsap"))
 
 # Prepare a dataframe with a umber of final strong and weak boundaries
 all_label <- all[,-2]
@@ -130,20 +158,20 @@ ggplot(all, aes(x = species, y = boundary)) +
   geom_boxplot(width = 0.05, outlier.shape = NA, linewidth = 0.2) +
   labs(x = "", y = "boundary strength") +
   scale_color_manual(values = c("#5c8ca3ff", "grey")) +
-  geom_text(data = all_label ,aes(x = c(0.8, 1.8, 2.8, 3.8, 4.8, 5.8), y = 4, label = strong),
+  geom_text(data = all_label ,aes(x = c(0.8, 1.8, 2.8, 3.8, 4.8, 5.8, 6.8, 7.8, 8.8), y = 4, label = strong),
             color = "#5c8ca3ff", angle = 90, size = 3, hjust = 0) +
-  geom_text(data = all_label ,aes(x = c(1.2, 2.2, 3.2, 4.2, 5.2, 6.2), y = 4, label = weak),
+  geom_text(data = all_label ,aes(x = c(1.2, 2.2, 3.2, 4.2, 5.2, 6.2, 7.2, 8.2, 9.2), y = 4, label = weak),
             color = "grey30", angle = 90, size = 3, hjust = 0) +
   scale_y_continuous(trans = "log10", guide = "prism_offset", limits = c(0.00001, 100),
-                     labels = function(x) format(round(x,3), scientific = TRUE),
+                     labels = function(x) format(round(x, 3), scientific = TRUE),
                      breaks = c(0.00001, 0.01, 10)) +
   theme_prism(base_line_size = 0.5, base_family = "sans", base_fontface = "plain") +
   theme(axis.line.y = element_line(), axis.line.x = element_blank(),
         text = element_text(size = 12), legend.title = element_blank(),
         axis.text.x = element_text(angle = 0), axis.ticks.x = element_blank(),
         legend.text = element_text(margin = margin(r = 10)), legend.position = "none",
-        plot.margin = unit(c(0.8,0.5,0.5,0), "cm"))
-ggsave("./All_species_boundary_strength_EDF5c.pdf", width = 4.8, height = 4.8)
+        plot.margin = unit(c(0.8, 0.5, 0.5, 0), "cm"))
+ggsave("./All_species_boundary_strength_EDF4c.pdf", width = 6.8, height = 4.8)
 
 # Plot the distribution of the insulation score values
 all$category <- gsub("strong", "strong boundaries", all$category)
@@ -160,4 +188,4 @@ ggplot(all, aes(x = insulation, y = species, fill = category)) +
         legend.text = element_text(margin = margin(r = 10)),
         plot.margin = unit(c(0.8,0.5,0.5,0), "cm"),
         axis.line.y = element_blank(), axis.ticks.y = element_blank())
-ggsave("./All_species_density_insulation_Fig2d.pdf", width = 4, height = 3.5)
+ggsave("./All_species_density_insulation_Fig2d.pdf", width = 4, height = 5.5)

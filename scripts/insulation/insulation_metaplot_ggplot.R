@@ -118,21 +118,21 @@ ggplot(ISdf_score, aes(x = V4, y = score, color = window)) +
         legend.text = element_text(margin = margin(r = 10)),
         plot.margin = unit(c(0.8, 0.5, 0.5, 0), "cm")) +
   facet_grid(~name)
-ggsave("mlei_IS_selection_EDF5a.pdf", width = 9, height = 3)
+ggsave("mlei_IS_selection_EDF4a.pdf", width = 9, height = 3)
 
 
 ### Generate a final set of boundaries. For M. leidyi, it corresponds to boundaries
 ### called at the resolution 1000 bp with sliding window sizes 5 kb and 10 kb.
 ##########
-df = read.csv("./mlei_1000bpRes.boundaries_Li.tsv", header = TRUE, sep = "\t")
-df = subset(df, df$is_bad_bin=="False")
+df <- read.csv("./mlei_1000bpRes.boundaries_Li.tsv", header = TRUE, sep = "\t")
+df <- subset(df, df$is_bad_bin == "False")
 
-w1 = df[,c(1:3,7,13,16)]
+w1 <- df[,c(1:3,7,13,16)]
 colnames(w1) = c("chrom", "start", "end", "log2_IS", "boundary_strength", "is_boundary")
-w1 = subset(w1, w1$is_boundary == "True")
+w1 <- subset(w1, w1$is_boundary == "True")
 
-w2 = df[,c(1:3,9,14,17)]
+w2 <- df[,c(1:3,9,14,17)]
 colnames(w2) = c("chrom", "start", "end", "log2_IS", "boundary_strength", "is_boundary")
-w2 = subset(w2, w2$is_boundary=="True")
+w2 <- subset(w2, w2$is_boundary == "True")
 
-final = merge_w1_w2(w1, w2, "mlei_1000bp")
+final <- merge_w1_w2(w1, w2, "mlei_1000bp")

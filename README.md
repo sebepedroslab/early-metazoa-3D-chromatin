@@ -5,7 +5,7 @@ Code to reproduce analyses in Kim et al. 2024
 
 ### Data analyses
 + The **Micro-C processing pipeline**, which covers the full workflow from raw sequenced reads to normalized contact matrices, is available in the [scripts folder](./scripts/microc_processing/). This pipeline is adapted from the [4DN HiC processing pipeline](https://data.4dnucleome.org/resources/data-analysis/hi_c-processing-pipeline).
-+ **Genome compartment analysis**, wihch can be found in the [script folder](./scripts/compartmentalization/) examines global compartmentalization patterns across phylogenetically diverse species. 
++ **Genome compartment analysis**, which can be found in the [script folder](./scripts/compartmentalization/) examines global compartmentalization patterns across phylogenetically diverse species. 
 + **Insulation analysis** includes the identification and annotation of insulation boundaries with epigenetic and genomic features. Find the relevant scripts [here](./scripts/insulation/)
 + The **Chromatin loop identification and annotation pipeline** for non-bilaterian animals is available [here](./scripts/chromatin_loops/).
 

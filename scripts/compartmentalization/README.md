@@ -20,7 +20,7 @@ To identify compartmentalization profiles, we followed the [cooltools notebook](
 >
 ![alt text](../../data/images/intermediate_compartment.png)
 
-4. Generate A, B and I interval regions.
+4. Generate A, B and I interval regions:
 ```
 for f in Sarc Cowc Sros Emue Mlei Tadh Nvec Dmel Hsap; do
 bedtools groupby -i ${f}_compartment_regions_Gaus_distr.txt -g 1,4 -c 2,3 -o min,max \
@@ -30,8 +30,6 @@ done
 ```
 
 5. Calculate the distribution of genomic features, ChIP-seq chromatin signals and RNA-seq expression values across identified compartments:
->
->[omics_in_compartments_gene_and_TEs_densities.R](omics_in_compartments_gene_and_TEs_densities.R)
 >
 >[omics_in_compartments_input_prep.sh](omics_in_compartments_input_prep.sh)
 >

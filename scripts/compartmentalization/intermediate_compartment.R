@@ -125,5 +125,5 @@ do.call(rbind, lapply(my_list, function(x) {
           text = element_text(size = 12), legend.title = element_blank(),
           legend.text = element_text(margin = margin(r = 10)), legend.position = "none",
           plot.margin = unit(c(0,0,0,0), "cm"))
-  ggsave(paste(unique(df_agg$species), "Gaus_distribution_barplot_EDF4c.pdf", sep = "_"), width = 4, height = 0.7)
+  ggsave(paste(unique(df_agg$species), "Gaus_distribution_barplot_EDF3c.pdf", sep = "_"), width = 4, height = 0.7)
 }))

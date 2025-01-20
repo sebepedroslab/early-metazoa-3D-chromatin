@@ -16,7 +16,7 @@
 >
 
 4. Aggregate valid pairs into normalized multiresolution contact matrix.
->Contact matrices were normalized with either juicer tools using using Knight-Ruiz balancing method
+>Contact matrices were normalized with either juicer tools using using Knight-Ruiz balancing method<br>
 >[s05_pairs2hic.sh](s05_pairs2hic.sh)<br>
 or with cooler using ICE balancing method<br>
 >[s06_pairs2cool.sh](s06_pairs2cool.sh)
