@@ -36,3 +36,7 @@ done
 >[omics_in_compartments.R](omics_in_compartments.R)
 >
 ![alt text](../../data/images/omics_in_compartments.png)
+
+6. To classify the detected distal interaction signal as micro-scale compartments or chromatin loops, we calculated the interaction activity of genomic bins as sum of ICE-normalized contacts at specific resultions. The detailed _ipa_ pipeline could be found [here](https://github.com/encent/ipa).
+
+![alt text](../../data/images/microcompartments_vs_loops.png)
